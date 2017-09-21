@@ -18,3 +18,4 @@ Fonts:
 
 Other:
 - Arc-dark GTK theme
+- Prezto for zsh
