@@ -1,20 +1,37 @@
-# Lines configured by zsh-newuser-install
+# Needed programs:
+# exa
+# neovim
+# prezto
+# -- git clone --recursive https://github.com/sorin-ionescu/prezto.git "${ZDOTDIR:-$HOME}/.zprezto"
+# (I guess git too)
+# A powerline-compatible font
+
+source "${ZDOTDIR:-$HOME}/.zprezto/init.zsh"
+prompt nicoulaj
+
 HISTFILE=~/.histfile
 HISTSIZE=1000
 SAVEHIST=1000
 setopt appendhistory nomatch
 unsetopt autocd beep extendedglob notify
-bindkey -v
-# End of lines configured by zsh-newuser-install
+
 # The following lines were added by compinstall
 zstyle :compinstall filename '/home/wizard/.zshrc'
-prompt kylewest 
 
 autoload -Uz compinit
 compinit
 # End of lines added by compinstall
 
-alias systemcuddle="systemctl"
+alias vim='nvim'
+alias e='nvim'
+alias ls='exa'
+alias "git commit"="git commit -S"
+alias ddos=ping
 
-export EDITOR=vim
-export VISUAL=vim
+export PATH=$PATH:~/.bin
+export EDITOR=nvim
+export VISUAL=nvim
+bindkey -v
+
+# OPAM configuration
+. /home/wizard/.opam/opam-init/init.zsh > /dev/null 2> /dev/null || true
