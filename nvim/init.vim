@@ -1,26 +1,10 @@
 " Uncomment this if running Arch
 " runtime! archlinux.vim
-"
-" To download plug, do this:
-" curl -fLo ~/.local/share/nvim/site/autoload/plug.vim --create-dirs \
-"   https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
-"
-" The colorscheme is located here:
-" curl -fLo ~/.config/nvim/colors/SerialExperimentsLain.vim --create-dirs \
-"   https://raw.githubusercontent.com/ThomasLagace/SerialExperimentsLain/master/colors/SerialExperimentsLain.vim
-"
-" Python is also needed.
-" You will need to run:
-" pip{2,3} install --upgrade neovim
-" for proper python support in neovim.
-"
+
 " Note: the below will only work in neovim.
 
 let g:python_host_prog  = '/usr/bin/python2.7'
 let g:python3_host_prog = '/usr/bin/python3'
-
-" Needed python packages:
-" Also: pip{2,3} install --upgrade neovim
 
 " Plug stuff below
 call plug#begin('~/.local/share/nvim/plugged')
@@ -38,7 +22,7 @@ Plug 'majutsushi/tagbar'
 " Neovim specific
 Plug 'neomake/neomake'            " Linting
 if has('nvim')
-	Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins'  } " Also: pip{2,3} install --upgrade neovim
+	Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins'  }
 else
 	Plug 'Shougo/deoplete.nvim' 
 	Plug 'roxma/nvim-yarp'
@@ -60,7 +44,7 @@ if has('autocmd')
 endif
 
 set laststatus=2 " Always display the statusline in all windows
-set showtabline=1 " Always display the tabline, even if there is only one tab
+set showtabline=1 " Display tabline when tabs are for to be have
 set noshowmode " Hide the default mode text (e.g. -- INSERT -- below the statusline)
 set tabstop=4
 set shiftwidth=4
@@ -86,7 +70,6 @@ if maparg('<C-L>', 'n') ==# ''
 endif
 
 colorscheme SerialExperimentsLain
-" wget 
 
 " PHP coding niceties
 let php_sql_query = 1
@@ -115,7 +98,7 @@ let g:hexmode_autodetect = 1
 " Nerd Tree
 map <C-n> :NERDTreeToggle<CR>
 
-" syntastic
+" syntastic (unused)
 " set statusline+=%#warningmsg#
 " set statusline+=%{SyntasticStatuslineFlag()}
 " set statusline+=%*
