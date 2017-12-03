@@ -1,42 +1,44 @@
 [options]
-font = Tamzen 16px 
+font = Tamzen 16px
+font = TamzenForPowerline 16px
+font = Tamsyn 16px 
 
 [colors]
 
 # special
-foreground      = #c8c8c8
-foreground_bold = #c8c8c8
-cursor          = #c8c8c8
-background      = rgba(0, 0, 0, 0.75)
+foreground      = #ffffff
+foreground_bold = #ffffff
+cursor          = #ffffff
+background      = rgba(0, 0, 0, 0.90)
 
 # black
-color0  = #251f1f
-color8  = #5e5e5e
+color0  = #808080
+color8  = #9c9c9c
 
 # red
-color1  = #f22609
-color9  = #eb4509
+color1  = #c48980
+color9  = #a15048
 
 # green
-color2  = #88e731
-color10 = #95e76b
+color2  = #8da862
+color10 = #4b7508
 
 # yellow
-color3  = #ffac18
-color11 = #ffac40
+color3  = #b29b7a
+color11 = #916f27
 
 # blue
-color4  = #0098de
-color12 = #46aede
+color4  = #809bc4
+color12 = #567cb0
 
 # magenta
-color5  = #e30c3e
-color13 = #e32c57
+color5  = #aa88b2
+color13 = #964e8f
 
 # cyan
-color6  = #d0db74
-color14 = #d6dbac
+color6  = #82adad
+color14 = #4e848a
 
 # white
-color7  = #ffffff
-color15 = #efefef
+color7  = #bfbfbf
+color15 = #9c9c9c
