@@ -1,8 +1,9 @@
 Neovim
 ======
 
-This is a neovim configuration.
-It resides in `~/.config/nvim`
+This is a vim / neovim configuration.
+Neovim config resides in `~/.config/nvim`, while vim configuration is in ~/.vimrc
+It *should* work in both vim and neovim, but has only been tested with nvim
 
 In order to use it, you should probably get a few things.
 
@@ -28,10 +29,21 @@ You will need:
     ```
     pip2 install --upgrade neovim
     pip3 install --upgrade neovim
+    pip3 install psutils
+    ```
+
++  universal-ctags
+
++ For node.js completion:
+    ``` 
+    sudo npm install -g tern
     ```
 + Merlin for ocaml (when I get it fixed)
 
     ```
     opam install merlin
     ```
-+ Of course, pip2, pip3, and opam, and a powerline compatible font
+
++ texlive for LaTeX editing support
+
++ Of course, pip2, pip3, and a powerline compatible font
