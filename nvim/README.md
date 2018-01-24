@@ -44,6 +44,7 @@ You will need:
     opam install merlin
     ```
 
-+ texlive for LaTeX editing support
++ texlive for LaTeX editing support (Add $pdflatex = 'pdflatex --shell-escape %O %S'; to ~/.latexmkrc)
+
 
 + Of course, pip2, pip3, and a powerline compatible font
