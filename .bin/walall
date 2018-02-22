@@ -1,1 +1,7 @@
-/home/wizard/.bin/walall
+#!/bin/bash
+
+wal -g -i $1
+if [[ $? != 0 ]]; then exit; fi
+wal_steam
+echo "Changing alacritty settings:"
+wal_alacritty

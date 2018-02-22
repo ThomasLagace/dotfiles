@@ -28,10 +28,7 @@ alias ls='exa'
 alias "git commit"="git commit -S"
 alias ddos=ping
 
-export PATH=$PATH:~/.bin
+export PATH=~/.bin:$PATH
 export EDITOR=nvim
 export VISUAL=nvim
 bindkey -v
-
-# OPAM configuration
-. /home/wizard/.opam/opam-init/init.zsh > /dev/null 2> /dev/null || true

@@ -1,1 +1,14 @@
-/home/wizard/.bin/togglecomp
+#!/bin/bash
+
+# Starts / stops xcompmgr.
+# VERY useful for games or if i3 starts lagging.
+PIDS=`pidof -o $$ -x xcompmgr`
+
+if [ x$PIDS != x ]
+    then kill -s SIGTERM $PIDS
+    # Properly set polybar's color with the rest of the system
+    export POLYBAR_BACK='${colors.background}'
+else
+    xcompmgr -D 2 -o 0 -fFc &
+    export POLYBAR_BACK='#00000000'
+fi

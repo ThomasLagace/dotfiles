@@ -1,1 +1,40 @@
-/home/wizard/.bin/wal_alacritty
+#!/bin/python3
+from os.path import expanduser
+import yaml
+
+"""
+This script was made to update Alacritty's colorscheme to sync with wal.
+Unfortunately, this is a major hack. It requires that a file called
+alacritty.yml.edit is hand edited. This script is to be called afterwards.
+Only then is the real config generated.
+"""
+
+with open(expanduser("~") + '/.cache/wal/colors.yml') as colorfile: # The colorscheme is in here
+    syscolors = yaml.safe_load(colorfile)
+    # This is the hand-edited file
+    with open(expanduser("~") + "/.config/alacritty/alacritty.yml.edit", "r") as cfgfile:
+        alcolors = yaml.safe_load(cfgfile)
+
+        alcolors['colors']['primary']['black'] = syscolors['colors']['color0']
+        alcolors['colors']['primary']['blue'] = syscolors['colors']['color1']
+        alcolors['colors']['primary']['cyan'] = syscolors['colors']['color2']
+        alcolors['colors']['primary']['green'] = syscolors['colors']['color3']
+        alcolors['colors']['primary']['magenta'] = syscolors['colors']['color4']
+        alcolors['colors']['primary']['red'] = syscolors['colors']['color5']
+        alcolors['colors']['primary']['white'] = syscolors['colors']['color6']
+        alcolors['colors']['primary']['yellow'] = syscolors['colors']['color7']
+        alcolors['colors']['bright']['black'] = syscolors['colors']['color8']
+        alcolors['colors']['bright']['blue'] = syscolors['colors']['color9']
+        alcolors['colors']['bright']['cyan'] = syscolors['colors']['color10']
+        alcolors['colors']['bright']['green'] = syscolors['colors']['color11']
+        alcolors['colors']['bright']['magenta'] = syscolors['colors']['color12']
+        alcolors['colors']['bright']['red'] = syscolors['colors']['color13']
+        alcolors['colors']['bright']['white'] = syscolors['colors']['color14']
+        alcolors['colors']['bright']['yellow'] = syscolors['colors']['color15']
+        alcolors['colors']['primary']['background'] = syscolors['special']['background']
+        alcolors['colors']['primary']['foreground'] = syscolors['special']['foreground']
+        alcolors['colors']['cursor']['cursor'] = syscolors['special']['cursor']
+        alcolors['colors']['cursor']['text'] = syscolors['special']['background']
+        # Copy the data to the real config file
+        with open(expanduser("~") + '/.config/alacritty/alacritty.yml', 'w') as outputfile:
+            yaml.dump(alcolors, outputfile, default_flow_style=False)
