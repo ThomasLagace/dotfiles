@@ -1,0 +1,1 @@
+/home/wizard/.config/qutebrowser/config.py
