@@ -1,21 +1,28 @@
 Dotfiles
 ========
 My Linux desktop configuration. It is intended to be purely functional (eyecandy sold separately).
+*New: eyecandy now included!*
 
 Included
 --------
-- i3 configuration + i3pystatus bar cfg found under `i3/`
-- vimrc + colors found under `vim/`
-- zshrc included
-- ncmpcpp config included in `ncmpcpp/`
-- termite config under `termite/`
+- i3 
+- polybar
+- nvim config
+- zshrc 
+- ncmpcpp
+- termite (this terminal is no longer used by me)
+- alacritty (much cooler terminal)
+- some fun scripts in `.bin`
 
 Needed
 ------
 Fonts: 
-- Ubuntu-mono
-- Tamzen
+- TamzenForPowerline
 
 Other:
-- Arc-dark GTK theme
+- i3-gaps, not std::i3
 - Prezto for zsh
+- wal
+- wal-steam
+- xcompmgr
+- everything listed in the nvim `README.md`
