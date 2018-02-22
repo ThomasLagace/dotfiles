@@ -25,4 +25,5 @@ Other:
 - wal
 - wal-steam
 - xcompmgr
+- exa (aliased as `ls` in zshrc)
 - everything listed in the nvim `README.md`
