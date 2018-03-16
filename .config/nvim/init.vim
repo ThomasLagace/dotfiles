@@ -27,7 +27,7 @@ Plug 'majutsushi/tagbar'          " Hit f8 to see file's tags
 Plug 'itchyny/vim-cursorword'     " Underline word under cursor
 Plug 'scrooloose/nerdtree'        " File viewer
 Plug 'thinca/vim-ref'             " Integrated reference viewer
-Plug 'dylanaraps/wal.vim'         " Syncs colorscheme with wallpaper
+Plug 'ThomasLagace/wal.vim'       " Syncs colorscheme with wallpaper, my patch to fix colors
 Plug 'junegunn/goyo.vim'          " Distraction-free editing. <F5> to play.
 
 " Neovim specific stuffs
@@ -35,7 +35,7 @@ Plug 'junegunn/goyo.vim'          " Distraction-free editing. <F5> to play.
 if has('nvim')
 	Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins'  } " Keyword completion
     Plug 'neomake/neomake'        " Linting
-"    Plug 'c0r73x/neotags.nvim'    " Like easytags, but asyncronously
+    Plug 'c0r73x/neotags.nvim'    " Like easytags, but asyncronously
     if has('python3')
         Plug 'Shougo/denite.nvim' " Helm for nvim
     endif
@@ -102,18 +102,12 @@ set encoding=utf-8  " Sets document encoding
 set tags=./.tags;   " Make the tags file hidden
 
 set incsearch " CTRL-G and CTRL-T keys to move to the next and previous match
-" Use <C-L> to clear the highlighting of :set hlsearch.
-if maparg('<C-L>', 'n') ==# ''
-  nnoremap <silent> <C-L> :nohlsearch<C-R>=has('diff')?'<Bar>diffupdate':''<CR><CR><C-L>
-endif
 
 " Directories.
 set backupdir=~/.local/share/nvim/backup
 set directory=~/.local/share/nvim/swap
 set undodir=~/.local/share/nvim/undo
 
-" Disable ex mode
-noremap Q <nop>
 
 " Use this schway colorscheme named after the best anime
 colorscheme wal
@@ -124,6 +118,38 @@ let php_htmlInStrings = 1
 
 " Turn on spellchecking
 map <F2> :setlocal spell! spelllang=en_us<CR>
+
+" Custom keybindings
+" Use <C-L> to clear the highlighting of :set hlsearch.
+if maparg('<C-L>', 'n') ==# ''
+    nnoremap <silent> <C-L> :nohlsearch<C-R>=has('diff')?'<Bar>diffupdate':''<CR><CR><C-L>
+endif
+" Disable ex mode
+noremap Q <nop>
+" ALT+{h,j,k,l} to switch windows in all modes
+inoremap <A-h> <C-\><C-N><C-w>h
+inoremap <A-j> <C-\><C-N><C-w>j
+inoremap <A-k> <C-\><C-N><C-w>k
+inoremap <A-l> <C-\><C-N><C-w>l
+nnoremap <A-h> <C-w>h
+nnoremap <A-j> <C-w>j
+nnoremap <A-k> <C-w>k
+nnoremap <A-l> <C-w>l
+
+" Terminal mode in neovim (cool!)
+if has('nvim')
+    tnoremap <C-\><C-\> <C-\><C-n> " CTRL + \ twice to exist terminal-mode.
+    " Now, simulate i_CTRL-R in terminal-mode, see :help registers
+    " and :help i_CTRL-R
+    tnoremap <expr> <C-R> '<C-\><C-N>"'.nr2char(getchar()).'pi'
+    "Use ALT+{h,j,k,l} to navigate windows from t3h terminal.
+    tnoremap <A-h> <C-\><C-N><C-w>h
+    tnoremap <A-j> <C-\><C-N><C-w>j
+    tnoremap <A-k> <C-\><C-N><C-w>k
+    tnoremap <A-l> <C-\><C-N><C-w>l
+endif
+
+    
 
 " --------------------
 " PLUGIN CONFIGS BELOW
@@ -156,8 +182,13 @@ map <F3> :Goyo<CR>
 nmap <F8> :TagbarToggle<CR>
 
 " Airline
-let g:airline_theme='badcat'    " Should look good with wal
+let g:airline_theme='wal'       " Keep up to date with the rest of the computer
 let g:airline_powerline_fonts=1 " Needs a powerline compatible font
+
+" "If you're doing a text search in this document for the word 'butts,' 
+" the good news is that it's here, but the bad news is that it only appears in 
+" this unrelated quote." -- Randall Munroe
+
 
 " Nerd Tree
 map <C-n> :NERDTreeToggle<CR>
@@ -190,14 +221,14 @@ let g:hexmode_autodetect = 1
 " Neovim specific stuff below
 
 " Neomake
-function! MyOnBattery()
+function! IsOnBattery()
     if filereadable('/sys/class/power_supply/AC/online') 
        return readfile('/sys/class/power_supply/AC/online') == ['0']
     endif
     return 0
 endfunction
 
-if MyOnBattery()
+if IsOnBattery()
   call neomake#configure#automake('w')
 else
   call neomake#configure#automake('nw', 1000)
