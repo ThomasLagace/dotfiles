@@ -7,7 +7,7 @@
 # A powerline-compatible font
 
 source "${ZDOTDIR:-$HOME}/.zprezto/init.zsh"
-prompt nicoulaj
+prompt cloud '>' magenta yellow
 
 HISTFILE=~/.histfile
 HISTSIZE=1000
@@ -27,8 +27,13 @@ alias e='nvim'
 alias ls='exa'
 alias "git commit"="git commit -S"
 alias ddos=ping
+alias pubip='curl icanhazip.com'
+alias pubip4='curl -4 icanhazip.com'
 
-export PATH=~/.bin:$PATH
+alias neofetch='neofetch --refresh_rate on'
+
+# Sift through my personal bin folder first
+
 export EDITOR=nvim
 export VISUAL=nvim
 bindkey -v
