@@ -2,6 +2,7 @@ Dotfiles
 ========
 My Linux desktop configuration. It is intended to be purely functional (eyecandy sold separately).
 *New: eyecandy now included!*
+TODO: Make eyecandy better!
 
 Included
 --------
@@ -12,7 +13,7 @@ Included
 - ncmpcpp
 - termite (this terminal is no longer used by me)
 - alacritty (much cooler terminal)
-- some fun scripts in `.bin`
+- some fun scripts in `.local/bin`
 
 Needed
 ------
@@ -24,6 +25,7 @@ Other:
 - Prezto for zsh
 - wal
 - wal-steam
+- oomox
 - xcompmgr
 - exa (aliased as `ls` in zshrc)
 - everything listed in the nvim `README.md`
