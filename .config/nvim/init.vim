@@ -27,7 +27,7 @@ Plug 'majutsushi/tagbar'          " Hit f8 to see file's tags
 Plug 'itchyny/vim-cursorword'     " Underline word under cursor
 Plug 'scrooloose/nerdtree'        " File viewer
 Plug 'thinca/vim-ref'             " Integrated reference viewer
-Plug 'ThomasLagace/wal.vim'       " Syncs colorscheme with wallpaper, my patch to fix colors
+Plug 'ThomasLagace/wal.vim'       " Syncs colorscheme with wallpaper, my patch for a dark scheme
 Plug 'junegunn/goyo.vim'          " Distraction-free editing. <F5> to play.
 
 " Neovim specific stuffs
@@ -37,7 +37,7 @@ if has('nvim')
     Plug 'neomake/neomake'        " Linting
     Plug 'c0r73x/neotags.nvim'    " Like easytags, but asyncronously
     if has('python3')
-        Plug 'Shougo/denite.nvim' " Helm for nvim
+        Plug 'Shougo/denite.nvim' " Helm for nvim, needs more configuration
     endif
 else
 	Plug 'Shougo/deoplete.nvim' 
@@ -99,7 +99,7 @@ set wildmenu        " command-line completion operates in an enhanced mode, <Tab
 set number          " Shows current line number
 set relativenumber  " Shows line numbers relative to the current line
 set encoding=utf-8  " Sets document encoding
-set tags=./.tags;   " Make the tags file hidden
+set tags=./.tags;   " Hide tags file
 
 set incsearch " CTRL-G and CTRL-T keys to move to the next and previous match
 
@@ -109,7 +109,7 @@ set directory=~/.local/share/nvim/swap
 set undodir=~/.local/share/nvim/undo
 
 
-" Use this schway colorscheme named after the best anime
+" Colors match desktop background
 colorscheme wal
 
 " PHP coding niceties
@@ -195,6 +195,7 @@ map <C-n> :NERDTreeToggle<CR>
 
 if has('nvim')
     " neotags
+    " Works well with universal ctags
     let g:neotags_file = './.tags' " Set tag file
     let g:neotags_enabled = 1      " Enable it
     " `extras` may need to be changed depending on the ctags version
@@ -250,7 +251,7 @@ endif
 
 " Completion libraries:
 
-" c++
+" C++
 let g:clang_library_path='/usr/lib64/libclang.so' " At least working on Arch...
                                                   " I hope it works on
                                                   " everything
