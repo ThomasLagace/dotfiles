@@ -1,0 +1,1 @@
+/home/wizard/Documents/syncdot/init.el
