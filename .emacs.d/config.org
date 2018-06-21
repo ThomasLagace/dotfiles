@@ -1,1 +1,1223 @@
-/home/wizard/Documents/syncdot/config.org
+* General Emacs Coniguration
+** Customize file
+   Makes it so the customize data isn't schlunked in my init.el
+   #+BEGIN_SRC emacs-lisp
+(setq custom-file (concat user-emacs-directory "_customize.el"))
+(load custom-file t)
+   #+END_SRC
+** Startup image
+   Add a fun image to the emacs startup screen
+   The variable is used below in Dashboard
+   #+BEGIN_SRC emacs-lisp
+     (defvar wiz-marisapic (concat user-emacs-directory "Pictures/marisabubbles.png"))
+
+     (if (file-readable-p wiz-marisapic) 
+         (lambda ()
+           (setq fancy-splash-image wiz-marisapic)
+           (message "Splash image loaded."))
+       (message "The splash image is unreadable."))
+   #+END_SRC
+   
+** De-clutter
+   Disable the useless cruft at the top of the screen
+   
+   #+BEGIN_SRC emacs-lisp
+(menu-bar-mode 0)
+(tool-bar-mode 0)
+(scroll-bar-mode -1)
+   #+END_SRC
+   
+** Show parenthesis
+   Shows matching parenthesis  
+   #+BEGIN_SRC emacs-lisp
+(require 'paren)
+(set-face-background 'show-paren-match (face-background 'default))
+(set-face-foreground 'show-paren-match "#def")
+(set-face-attribute 'show-paren-match nil :weight 'extra-bold)
+(setq show-paren-delay 0)
+(show-paren-mode)
+   #+END_SRC
+   
+** electric pairs
+   When you open a code block, close that block.
+   #+BEGIN_SRC emacs-lisp
+     (setq electric-pair-pairs '(
+                                      (?\( . ?\))
+                                      (?\[ . ?\])
+                                      (?\{ . ?\})
+                                      (?\" . ?\")
+                                      ;; (?\' . ?\')
+                                      ))
+     (setq electric-pair-preserve-balance t)
+     (electric-pair-mode t)
+   #+END_SRC
+** Show columns
+   #+BEGIN_SRC emacs-lisp
+  (setq column-number-mode t)
+   #+END_SRC
+   
+** Fonts
+   Set the font to something cool
+   #+BEGIN_SRC emacs-lisp
+(set-default-font "Terminus-11")
+
+(add-to-list 'default-frame-alist
+             '(font . "Terminus-11")
+             '(font . "Noto Sans CJK JP-11"))
+   #+END_SRC
+   
+** Transparency
+   Sets the window's transparency.
+   
+   The first number in the alpha section applies when the window is
+   active, the second when it's inactive.
+   #+BEGIN_SRC emacs-lisp
+                                        ;; active . inactive
+(set-frame-parameter (selected-frame) 'alpha '(85 . 85))
+(add-to-list 'default-frame-alist '(alpha . (85 . 85)))
+   #+END_SRC
+** Backup files
+   Edit backup files properties
+   https://www.emacswiki.org/emacs/BackupDirectory
+   #+BEGIN_SRC emacs-lisp
+(setq
+ backup-by-copying t                  ; don't clobber symlinks
+ backup-directory-alist
+   `(("." . ,(concat user-emacs-directory "backups"))) ; don't litter my fs tree
+ delete-old-versions t
+ kept-new-versions 6
+ kept-old-versions 2
+ version-control t)                   ; use versioned backups
+;; Actually a lot of this doesn't work
+(setq
+ make-backup-files nil
+ auto-save-default nil)
+   #+END_SRC
+   
+** Scrolling
+   #+BEGIN_SRC emacs-lisp
+(setq scroll-conservatively 100) ;; don't scroll a metric boatload when bottom is hit
+   #+END_SRC
+   
+   #+BEGIN_SRC emacs-lisp
+
+   #+END_SRC
+** Shut up emacs
+   #+BEGIN_SRC emacs-lisp
+   (setq ring-bell-function 'ignore) ;;emacs stfu
+   #+END_SRC
+   
+** Show line numbers
+   Enable lines when editing files
+   #+BEGIN_SRC emacs-lisp
+     (unless (version< emacs-version "26.1")
+       (setq display-line-numbers-type 'relative)
+       (global-display-line-numbers-mode t))
+   #+END_SRC
+   
+** y or n prompts
+   #+BEGIN_SRC emacs-lisp
+   (defalias 'yes-or-no-p 'y-or-n-p) ;; make yes or no prompts ask for y or n
+   #+END_SRC
+   
+** Customize the terminal
+   #+BEGIN_SRC emacs-lisp
+     (defvar wiz-term-shell "/bin/zsh") ;; I like to utilize zsh
+     (defadvice ansi-term (before force-bash)
+       (interactive (list wiz-term-shell)))
+     (ad-activate 'ansi-term)
+   #+END_SRC
+   
+** Prettify symbols
+   +=|====> = CoolSword
+   #+BEGIN_SRC not-emacs-lisp
+     (add-to-list 'prettify-symbols-alist '("+=|====>" 🗡️))
+     (global-prettify-symbols-mode 1)
+   #+END_SRC
+   
+** Tabs are spaces?!
+   #+BEGIN_SRC emacs-lisp
+     (setq-default indent-tabs-mode nil)
+     (setq-default tab-width 4)
+     (setq indent-line-function 'insert-tab)
+   #+END_SRC
+   
+** org-mode
+*** General org settirgs
+Auto-indent org files nicely
+#+BEGIN_SRC emacs-lisp
+  (add-hook 'org-mode-hook 'org-indent-mode)
+#+END_SRC
+Highlight syntax in source blocks
+#+BEGIN_SRC emacs-lisp
+  (setq org-src-fontify-natively t)
+#+END_SRC
+*** Capture Templates
+    Set the org mode directory and define some capture templates
+    #+BEGIN_SRC emacs-lisp
+      (setq org-directory "~/Documents/org/")
+      (setq org-agenda-files '("~/Documents/org/"))
+      (setq org-capture-templates
+            (quote
+             (("j" "Journal entry" entry
+               (file+olp+datetree "journal.org")
+               ("**** Happenings of today"))
+              ("t" "Todo" entry
+               (file+olp+datetree "notes.org")
+               "*** TODO %^{Thing to do}\nDEADLINE: %t\n")
+              ("T" "Thoughts" entry
+               (file+headline "notes.org" "Thoughts")
+               "** %^{Summary} %t :thoughts:\n")
+              ("s" "School-related task" entry
+               (file+datetree+prompt "school.org")
+               "*** TODO %^{What needs be done}\n DEADLINE: %t\n")
+              ("d" "Dream Journal" entry
+               (file+olp+datetree "dreams.org")
+               "**** Dream\n")
+              ("m" "Bookmark" entry
+               (file+headline "links.org" "Unsorted sites")
+               "[[%^{link}][%^{description}]]\n"))))
+    #+END_SRC
+    
+*** Org templates
+    <el expands to emacs lisp code block
+    #+BEGIN_SRC emacs-lisp
+  (setq org-src-window-setup 'current-window)
+  (add-to-list 'org-structure-template-alist
+               '("el" "#+BEGIN_SRC emacs-lisp\n?\n#+END_SRC"))
+    #+END_SRC
+  
+*** Autocomplete todo entries
+#+BEGIN_SRC emacs-lisp
+  (defun org-summary-todo (n-done n-not-done)
+    "Switch entry to DONE when all subentries are done, to TODO otherwise."
+    (let (org-log-done org-log-states)
+                                        ; turn off logging
+      (org-todo (if (= n-not-done 0) "DONE" "TODO"))))
+  (add-hook 'org-after-todo-statistics-hook 'org-summary-todo)
+#+END_SRC
+*** export settings
+**** use pdflatex
+#+BEGIN_SRC emacs-lisp
+  (setq org-latex-to-pdf-process (list "latexmk -f -pdf %f"))
+
+#+END_SRC
+*** Keep diary
+#+BEGIN_SRC emacs-lisp
+  (setq org-agenda-include-diary t)
+  (setq org-default-notes-file "notes.org")
+#+END_SRC
+** set browser
+   Default browser should be qutebrowser
+   #+BEGIN_SRC emacs-lisp
+     (setq browse-url-default-browser 'browse-url-generic
+           browse-url-generic-program "qutebrowser"
+           ;; And if I'm stuck like a rock in a hard place...
+           browse-url-default-windows-browser 'browse-url-firefox)
+   #+END_SRC
+** Buffers
+   Expert mode to streamline stuff. Don't ask for confirmation of
+   "dangerous" operations.
+    
+    The long variable settage is to group different types of buffers
+    to make it easier to navigate.
+   #+BEGIN_SRC emacs-lisp
+     (setq ibuffer-expert 1)
+     ;; see: ibuffer-filtering-alist
+     (setq ibuffer-saved-filter-groups
+           (quote (("default"
+                    ("dired" (mode . dired-mode))
+                    ("erc" (mode . erc-mode))
+                    ;; ("org" (directory . "^~\\/Documents\\/org\\/"))
+                    ("emacs" (or
+                              ;; (directory . "^~\\/\\.emacs\\.d\\/")
+                              (name . "^\\*scratch\\*$")
+                              (name . "^\\*dashboard\\*$")
+                              (mode . customize-mode)
+                              (name . "^\\*Messages\\*$")))
+                    ("gnus" (or
+                             (mode . message-mode)
+                             (mode . bbdb-mode)
+                             (mode . mail-mode)
+                             (mode . gnus-group-mode)
+                             (mode . gnus-summary-mode)
+                             (mode . gnus-article-mode)
+                             (name . "^\\.bbdb$")
+                             (name . "^\\.newsrc-dribble")))))))
+
+     (add-hook 'ibuffer-mode-hook
+               (lambda ()
+                 (ibuffer-switch-to-saved-filter-groups "default")))
+
+     ;; Use human readable Size column instead of original one
+     (define-ibuffer-column size-h
+       (:name "Size")
+       (cond
+        ((> (buffer-size) 1000000) (format "%7.1fM" (/ (buffer-size) 1000000.0)))
+        ((> (buffer-size) 100000) (format "%7.0fk" (/ (buffer-size) 1000.0)))
+        ((> (buffer-size) 1000) (format "%7.1fk" (/ (buffer-size) 1000.0)))
+        (t (format "%8d" (buffer-size)))))
+
+     ;; Modify the default ibuffer-formats
+     (setq ibuffer-formats
+           '((mark modified read-only " "
+                   (name 18 18 :left :elide)
+                   " "
+                   (size-h 9 -1 :right)
+                   " "
+                   (mode 16 16 :left :elide)
+                   " "
+                   filename-and-process)))
+
+   #+END_SRC
+*** TODO fix the commented buffer lines
+** Refresh theme on the fly
+Use [[https://github.com/dylanaraps/pywal][wal]] and [[https://www.gnu.org/software/emacs/manual/html_node/elisp/File-Notifications.html][file notifications]] to load a theme on the fly, courtesy of [[https://github.com/dylanaraps/pywal/pull/43][this pull request]].
+#+BEGIN_SRC emacs-lisp
+   (add-to-list 'custom-theme-load-path (concat user-emacs-directory "themes"))
+   (defvar wiz-theme (concat user-emacs-directory "themes/colors.el"))
+   (defun wiz-apply-theme ()
+     (interactive)
+     (progn
+        (load-file wiz-theme)))
+
+   (defun theme-callback (event)
+     (wiz-apply-theme))
+
+   (require 'filenotify)
+   (file-notify-add-watch
+     wiz-theme '(change) 'theme-callback)
+
+  ;; Set the theme on startup
+  (wiz-apply-theme)
+#+END_SRC
+* Package Repo Config
+** Repo Location
+   Let's start by configuring the repositories
+   #+BEGIN_SRC emacs-lisp
+(require 'package)
+
+(setq package-archives '(("gnu" . "https://elpa.gnu.org/packages/")
+                         ("marmalade" . "https://marmalade-repo.org/packages/")
+                         ;;("melpa-stable" . "https://stable.melpa.org/packages/")
+                         ("melpa" . "https://melpa.org/packages/")
+                         ("org" . "https://orgmode.org/elpa/")))
+(setq package-enable-at-startup nil)
+(package-initialize)
+   #+END_SRC
+   
+** use-package
+   use-package for installing packages
+   https://github.com/jwiegley/use-package
+   
+   #+BEGIN_SRC emacs-lisp
+(unless (package-installed-p 'use-package)
+  (package-refresh-contents)
+  (package-install 'use-package))
+
+(eval-when-compile
+  (require 'use-package))
+   #+END_SRC
+   
+* Package Configuration
+** Automagic updates
+   Keep packages up to date
+   #+BEGIN_SRC emacs-lisp
+(use-package auto-package-update
+  :ensure t
+  :config
+  (setq auto-package-update-delete-old-versions t)
+  (setq auto-package-update-hide-results t)
+  ;; Auto update after a week
+  (auto-package-update-maybe))
+   #+END_SRC
+   
+   Get a theme that looks good with wal
+   
+** avy
+   use =f= to hint letters n stuff.
+   #+BEGIN_SRC emacs-lisp
+  (use-package avy
+    :ensure t)
+   #+END_SRC
+** Themes
+   My current theme configuration above does this better
+   #+BEGIN_SRC COMMENT
+     (when window-system
+       (use-package xresources-theme
+        :ensure t
+        :config
+        (load-theme 'xresources t)))
+
+   #+END_SRC
+   
+** hide minor modes on modeline
+   Diminish hides minor modes on the modeline.
+   #+BEGIN_SRC emacs-lisp
+     (use-package diminish
+       :ensure t
+       :init
+       (diminish 'beacon-mode)
+       (diminish 'rainbow-mode)
+       (diminish 'evil-org-mode)
+       (diminish 'beacon-mode)
+       (diminish 'evil-escape-mode)
+       (diminish 'evil-commentary-mode)
+       (diminish 'which-key-mode)
+       (diminish 'ivy-mode)
+       (diminish 'undo-tree-mode)
+       (diminish 'which-key-mode))
+   #+END_SRC
+** symon
+Displays a system monitor in the echo area when nothing is really
+happening.
+
+I have it disabled because it tends to get in the way when things pop
+up that need a bit of time to read.
+
+   #+BEGIN_SRC commented
+     (use-package symon
+       :ensure t
+       :defer t
+       :init
+       (symon-mode))
+   #+END_SRC
+** rainbow
+   Lights up color tokens / delimiters
+    
+   It might be better to later configure this to only enable on
+   certain modes, but it's nice enough to have globally until it
+   becomes a nusiance.
+   #+BEGIN_SRC emacs-lisp
+  (use-package rainbow-mode
+    :ensure t
+    :init (add-hook 'prog-mode-hook 'rainbow-mode))
+  (use-package rainbow-delimiters
+    :ensure t
+    :init
+    (rainbow-delimiters-mode 1))
+   #+END_SRC
+** Show cursor location
+   When a window is changed / opened, the cursor's location is visibly
+   pinged.
+   #+BEGIN_SRC emacs-lisp
+     (use-package beacon
+       :ensure t
+       :init
+       (beacon-mode 1))
+   #+END_SRC
+** org-mode
+*** Master org package
+   Keep org-mode up to date straight from the cow's utters.
+   If the manual is not on your computer, it's [[https://orgmode.org/manual/][here]].
+   #+BEGIN_SRC emacs-lisp
+(use-package org
+  :ensure t
+  :pin org)
+   #+END_SRC
+*** Pretty bullets
+    Make bullets look choice
+#+BEGIN_SRC emacs-lisp
+  (use-package org-bullets
+    :ensure t
+    :config
+    (add-hook 'org-mode-hook 'org-bullets-mode))
+#+END_SRC
+*** org-download
+For [[https://github.com/abo-abo/org-download][drag n drop]] images n stuff
+#+BEGIN_SRC emacs-lisp
+  (use-package org-download
+    :after org
+    :ensure t
+    :defer t
+    :init
+    (add-hook 'dired-mode-hook 'org-download-enable))
+#+END_SRC
+** Blogging software lol
+[[http://renard.github.io/o-blog-v2/index.html][Jekyll but with org-mode?]]
+#+BEGIN_SRC emacs-lisp
+  (use-package o-blog
+    :defer t
+    :ensure t)
+#+END_SRC
+** Keybind-related packages
+   #+BEGIN_SRC emacs-lisp
+    (use-package general
+      :ensure t)
+   #+END_SRC
+*** Vim bindings
+    Let's get some vim up in here.
+    
+**** Evil
+    Evil is pretty much the entirety of Vim in Emacs.
+    
+    [[https://github.com/emacs-evil/evil-collection][evil-collection]] provides evil in many different modes.
+    
+    [[https://github.com/Somelauw/evil-org-mode][evil-org]] adds nice bindings to org-mode.
+    #+BEGIN_SRC emacs-lisp
+(use-package evil
+  :ensure t
+  :init
+  (setq evil-want-integration nil)
+  :config 
+  (evil-mode t)
+  (setq evil-shift-width 4))
+
+(use-package evil-collection
+  :after evil
+  :ensure t
+  :config
+  (evil-collection-init))
+
+(use-package evil-org
+  :ensure t
+  :after (org evil-collection general)
+  :config
+  (add-hook 'org-mode-hook 'evil-org-mode)
+  (add-hook 'evil-org-mode-hook
+            (lambda ()
+              (evil-org-set-key-theme '(textobjects insert navigation
+                                        additional shift todo calendar))))
+  (require 'evil-org-agenda)
+  (evil-org-agenda-set-keys))
+    #+END_SRC
+    
+**** evil-surround
+    You can surround in visual-state with =S<textobject>= or =gS<textobject>= 
+    and in normal-state with =ys<textobject>= or =yS<textobject>=.  
+    You can change a surrounding with =cs<old-textobject><new-textobject>=.
+    You can delete a surrounding with =ds<textobject>=.
+    #+BEGIN_SRC emacs-lisp
+(use-package evil-surround
+  :after evil
+  :ensure t
+  :config
+  (global-evil-surround-mode 1))
+    #+END_SRC
+**** evil-escape
+    hit fd to escape pretty much everything
+    #+BEGIN_SRC emacs-lisp
+(use-package evil-escape
+  :ensure t
+  :config
+  (setq-default evil-escape-key-sequence "fd")
+  (evil-escape-mode))
+    #+END_SRC
+    [[https://github.com/Somelauw/evil-org-mode][org-mode keybindings for evil mode]]
+    #+BEGIN_SRC emacs-lisp
+    #+END_SRC
+**** evil-commentary
+[[https://github.com/linktohack/evil-commentary][github here]]
+Essentially:
+- =gcc= comments out a line
+- =gc= comments out the target of a motion
+#+BEGIN_SRC emacs-lisp
+  (use-package evil-commentary
+    :ensure t
+    :defer t
+    :init
+    (add-hook 'prog-mode-hook 'evil-commentary-mode))
+#+END_SRC
+** Startup splash screen
+   Show a custom buffer on startup
+   #+BEGIN_SRC emacs-lisp
+     (use-package dashboard
+       :ensure t
+       :config
+       (dashboard-setup-startup-hook)
+       (setq dashboard-banner-logo-title "Electronic Macs")
+       (setq dashboard-startup-banner wiz-marisapic)
+       (setq dashboard-items '((recents . 5)
+                               (agenda)
+                               (projects . 5)
+                               (bookmarks . 5)
+                               (registers . 5))))
+   #+END_SRC
+   
+** Tags
+   make tag files.
+   #+BEGIN_SRC emacs-lisp
+    (use-package ggtags
+      :defer t
+      :ensure t)
+   #+END_SRC
+*** TODO: Make tag files do stuff
+   
+** Line numbering
+   Make it happen relatively to the current line.
+   This can assist greatly with evil navigation.
+   
+   This is now handled by emacs builtin =display-line-numbers-mode=
+   #+BEGIN_SRC emacs-lisp
+     ;; (use-package linum-relative
+     ;;   :ensure t
+     ;;   :config
+     ;;   (unless (version<= emacs-version "26.1")
+     ;;     (setq linum-relative-backend 'display-line-numbers-mode))
+     ;;  (add-hook 'find-file-hook 'linum-relative-mode))
+   #+END_SRC
+** Project Management
+    TODO: Set this up to actually work well
+   #+BEGIN_SRC emacs-lisp
+(use-package projectile
+  :ensure t
+  :config
+  (projectile-global-mode))
+   #+END_SRC
+** Autocompletion
+*** Fuzzy matching
+    Ivy, swiper, and counsel all provide fuzzy-matching on different emacs
+    operations.
+    #+BEGIN_SRC emacs-lisp
+(use-package ivy
+  :ensure t
+  :config
+  (setq ivy-use-virtual-buffers t
+            ivy-count-format "%d/%d "))
+
+(use-package swiper
+  :ensure t)
+
+(use-package counsel
+  :ensure t)
+
+(use-package counsel-projectile
+  :ensure t)
+    #+END_SRC
+    
+*** Code completion
+    [[https://github.com/auto-complete/auto-complete/blob/master/doc/manual.md][Auto completes]] stuff in the buffer
+    
+    #+BEGIN_SRC commented
+(use-package auto-complete
+  :ensure t
+  :config
+  (ac-config-default))
+    #+END_SRC
+    
+    #+BEGIN_SRC emacs-lisp
+      (use-package company
+        :ensure t
+        :config
+        (setq company-maximum-prefix-length 3
+              company-idle-delay 0.2)
+        (add-hook 'after-init-hook 'global-company-mode))
+      ;; Documentation popups with company
+      (when window-system
+        (use-package company-quickhelp
+          :ensure t
+          :after company
+          :config
+          (add-hook 'company-mode-hook 'company-quickhelp-mode)))
+    #+END_SRC
+** Snippets
+Powered by Yasnippet
+
+Note that the =yasnippet-snippets= file may need to be manually
+installed.
+#+BEGIN_SRC emacs-lisp
+  (use-package yasnippet
+    :ensure t)
+
+  (use-package yasnippet-snippets
+    :pin melpa
+    :after yasnippet
+    :config
+    (yas-reload-all))
+#+END_SRC
+** pretty-mode
+[[https://github.com/pretty-mode/pretty-mode][Redisplay parts of the Emacs buffer as pretty symbols.]]
+   #+BEGIN_SRC emacs-lisp
+  (when window-system
+    (use-package pretty-mode
+      :ensure t
+      :config
+      (global-pretty-mode t)))
+   #+END_SRC
+** Programming language specific stuff
+*** emacs-lisp
+Enable yasnippet
+#+BEGIN_SRC emacs-lisp
+  (add-hook 'emacs-lisp-mode-hook 'yas-minor-mode)
+#+END_SRC
+*** Clojure
+Now that I'm going to be trying out this live-coding thing, I'm going
+to need some clojure modes for working with [[http://overtone.github.io/docs.html][overtone]]. [[http://cider.readthedocs.io/en/latest/][cider]] provides
+REPL integration with emacs and company highlighting. Obviously,
+[[https://github.com/clojure-emacs/clojure-mode/][clojure-mode]] just gives clojure highlighting n stuff. See also: the
+clojure wiki page for [[http://clojure-doc.org/articles/tutorials/emacs.html][integrating with emacs]].
+    
+Essentially, you need to add the following to =~/.lein/profiles.clj=:
+#+BEGIN_SRC clojure
+  {:repl {:plugins [[cider/cider-nrepl "0.17.0"]]}}
+#+END_SRC
+Note that you need to keep this updated to the current =cider-nrepl=
+version. You can =lein search cider-nrepl= in a terminal for this.
+
+#+BEGIN_SRC emacs-lisp
+  (use-package clojure-mode
+    :pin melpa
+    :ensure t
+    :defer t)
+  (use-package cider
+    :pin melpa
+    :after clojure-mode
+    :ensure t
+    :defer t
+    :config
+    (add-hook 'cider-repl-mode-hook #'company-mode)
+    (add-hook 'cider-mode-hook #'company-mode)
+    (add-hook 'cider-repl-mode-hook #'cider-company-enable-fuzzy-completion)
+    (add-hook 'cider-mode-hook #'cider-company-enable-fuzzy-completion))
+  (use-package clojure-snippets
+    :after clojure-mode
+    :ensure t
+    :defer t
+    :config
+    (add-to-list 'clojure-mode-hook 'yas-minor-mode))
+#+END_SRC
+*** Markdown
+    (use-package markdown-mode
+    :defer t
+    :ensure t)
+*** Python
+**** jedi for autocompletion sources n stuff
+    #+BEGIN_SRC emacs-lisp
+      (use-package company-jedi
+        :ensure t
+        :defer t
+        :init
+        (defun wiz-python-company-mode-hook ()
+            (add-to-list 'company-backends 'company-jedi))
+        (add-hook 'python-mode-hook 'wiz-python-company-mode-hook))
+    #+END_SRC
+**** Snippets
+Enable yasnippet
+#+BEGIN_SRC emacs-lisp
+  (add-to-list 'python-mode-hook 'yas-minor-mode)
+#+END_SRC
+*** Javascript
+**** Better editing mode
+    [[https://github.com/mooz/js2-mode][js2-mode]] for help editing java files. Keybindings in [[https://github.com/emacs-evil/evil-collection/blob/master/evil-collection-js2-mode.el][this file]].
+    #+BEGIN_SRC emacs-lisp
+(use-package js2-mode
+  :ensure t
+  :defer t
+  :init
+  (add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))
+  (add-to-list 'interpreter-mode-alist '("node" . js2-mode)))
+    #+END_SRC
+**** Completion
+Use [[http://ternjs.net/doc/manual.html][tern]] to help complete javascript snippets.
+#+BEGIN_SRC emacs-lisp
+  (use-package company-tern
+    :ensure t
+    :defer t
+    :init
+    (defun wiz-js2-company-mode-hook ()
+        (add-to-list 'company-backends 'company-tern))
+    (add-hook 'js2-mode-hook 'wiz-js2-company-mode-hook))
+#+END_SRC
+**** Snippets
+Enable yasnippet
+#+BEGIN_SRC emacs-lisp
+  (add-to-list 'js2-mode-hook 'yas-minor-mode)
+#+END_SRC
+*** C / C++
+**** Completion
+Irony handles enhanced C / C++ operations powered by clang
+#+BEGIN_SRC emacs-lisp
+      (use-package company-irony
+        :after (company, irony)
+        :ensure t
+        :config
+        (add-to-list 'company-backends 'company-irony))
+      (use-package irony
+        :ensure t
+        :defer t
+        :init
+        (add-hook 'c++-mode-hook 'irony-mode)
+        (add-hook 'c-mode-hook 'irony-mode)
+        (add-hook 'irony-mode-hook 'irony-cdb-autosetup-compile-options))
+      (with-eval-after-load 'company
+        (add-hook 'c++-mode-hook 'company-mode)
+        (add-hook 'c-mode-hook 'company-mode))
+#+END_SRC
+**** Snippets
+Enable yasnippet on c / c++ modes
+#+BEGIN_SRC emacs-lisp
+  (add-hook 'c-mode-hook 'yas-minor-mode)
+  (add-hook 'c++-mode-hook 'yas-minor-mode)
+#+END_SRC
+*** Web Development
+**** Web mode
+Should give everything you need for a web-dev major mode, except for
+company integration.
+
+This might also provide a decent php-mode, but that might require some
+testing, especially without company.
+#+BEGIN_SRC emacs-lisp
+  (use-package web-mode
+    :pin melpa
+    :ensure t
+    :defer t
+    :init
+    (add-to-list 'auto-mode-alist '("\\.html\\'" . web-mode))
+    (add-to-list 'auto-mode-alist '("\\.phtml\\'" . web-mode))
+    (add-to-list 'auto-mode-alist '("\\.tpl\\.php\\'" . web-mode))
+    (add-to-list 'auto-mode-alist '("\\.[agj]sp\\'" . web-mode))
+    (add-to-list 'auto-mode-alist '("\\.as[cp]x\\'" . web-mode))
+    (add-to-list 'auto-mode-alist '("\\.erb\\'" . web-mode))
+    (add-to-list 'auto-mode-alist '("\\.mustache\\'" . web-mode))
+    (add-to-list 'auto-mode-alist '("\\.djhtml\\'" . web-mode))
+    :config
+    (add-hook 'web-mode-hook 'company-mode))
+    
+#+END_SRC
+**** Web mode completion
+Web-mode completion
+#+BEGIN_SRC emacs-lisp
+  (use-package company-web
+    :ensure t
+    :hook (web-mode . (lambda ()
+              (add-to-list 'company-backends 'company-web-html)
+              (add-to-list 'company-backends 'company-web-jade)
+              (add-to-list 'company-backends 'company-web-slim))))
+#+END_SRC
+**** JSON
+Just an enhanced json mode
+#+BEGIN_SRC emacs-lisp
+(use-package json-mode
+  :ensure t
+  :mode (("\\.json\\'" . json-mode)
+	   ("\\manifest.webapp\\'" . json-mode )
+	   ("\\.tern-project\\'" . json-mode)))
+#+END_SRC
+**** PHP
+***** Enhanced major-mode
+Should (at least) include all standard function sources for company in
+addition to some other niceties. See more on their
+[[https://github.com/arnested/php-extras][GitHub page]].
+#+BEGIN_SRC emacs-lisp
+  (use-package php-extras
+    :pin marmalade
+    :defer t
+    :ensure t)
+#+END_SRC
+***** Snippets
+#+BEGIN_SRC emacs-lisp
+  (add-hook 'php-mode-hook 'yas-minor-mode)
+#+END_SRC
+
+*** LaTeX
+**** Completion
+#+BEGIN_SRC emacs-lisp
+  (use-package company-auctex
+    :defer t
+    :ensure t)
+#+END_SRC
+**** Snippets
+Enable yasnippet
+#+BEGIN_SRC emacs-lisp
+  (add-hook 'tex-mode-hook 'yas-minor-mode)
+#+END_SRC
+*** Shell
+Show completions for shell mode buffers
+#+BEGIN_SRC emacs-lisp
+  (use-package readline-complete
+    :defer t
+    :ensure t)
+#+END_SRC
+
+*** Music stuff
+**** Supercollider
+#+BEGIN_SRC emacs-lisp
+  (use-package sclang-extensions
+    :ensure t
+    :defer t)
+#+END_SRC
+*** Arch Linux PKGBUILD
+#+BEGIN_SRC emacs-lisp
+  (use-package pkgbuild-mode
+    :ensure t
+    :defer t)
+#+END_SRC
+** Show key binds
+   Pops up a screen that helps you navigate and complete commands
+   #+BEGIN_SRC emacs-lisp
+(use-package which-key
+  :ensure t
+  :init
+  (which-key-mode))
+   #+END_SRC
+** IRC
+Internet relay chat. It's where hackers go to communicate. Think of it
+like two boats in a shipping channel.
+#+BEGIN_SRC emacs-lisp
+  ;; keep ERC up to date
+  (use-package erc
+    :ensure t
+    :defer t
+    :init
+    (defun wiz-irc-init ()
+    "Access the encrypted file storing all of your irc connection
+    information. It automatically connects you to a default set of
+    servers."
+      (interactive)
+      (if (file-exists-p
+            (concat user-emacs-directory "irc-servers.el.gpg"))
+          (load-file (concat user-emacs-directory "irc-servers.el.gpg"))))
+    ;; Load the file containing all of my server connection info
+    :config
+    ;; Enable the modules I want
+    (setq erc-modules '(autojoin
+                        completion
+                        dcc
+                        button
+                        fill
+                        match
+                        netsplit
+                        ring
+                        list
+                        log
+                        readonly
+                        noncommands
+                        networks
+                        move-to-prompt
+                        notifications
+                        track
+                        irccontrols
+                        move-to-prompt
+                        menu
+                        stamp))
+    ;; Use my auth-sources pl0x
+    (setq erc-prompt-for-nickserv-password nil
+          erc-prompt-for-password nil)
+    ;; List of places to look for IRC connection info
+    ;; irc-servers.el.gpg should now hold all of that information
+    ;; (setq auth-sources `("~/.authinfo.gpg" "~/.authinfo" "~/.netrc"
+    ;;                      ,(concat user-emacs-directory ".authinfo.gpg")))
+    ;; Append this if name is in use
+    (setq erc-nick-uniquifier "^")
+    ;; De-clutter my shiznit
+    (setq erc-hide-list '("JOIN" "PART" "QUIT"))
+    ;; Name buffers something logical
+    (setq erc-rename-buffers t)
+    ;; Interpret mIRC-style color commands in IRC chats
+    (setq erc-interpret-mirc-color t)'
+    ;; Don't focus buffer on connect
+    (setq erc-join-buffer 'bury)
+    ;; Change fill to emacs buffer width
+    ;; It's a bit buggy, so cuidado, eh?
+    (make-variable-buffer-local 'erc-fill-column)
+    ;; (add-hook 'window-configuration-change-hook 
+    ;;           '(lambda ()
+    ;;              (save-excursion
+    ;;                (walk-windows
+    ;;                 (lambda (w)
+    ;;                   (let ((buffer (window-buffer w)))
+    ;;                     (set-buffer buffer)
+    ;;                     (when (eq major-mode 'erc-mode)
+    ;;                       (setq erc-fill-column (- (window-width w) 2)))))))))
+    ;; Logging
+    (setq erc-fill-column 120)
+    (setq erc-fill-function 'erc-fill-static)
+    (setq erc-log-insert-log-on-open nil
+          erc-log-channels t
+          erc-log-channels-directory "~/.irclogs/"
+          erc-save-buffer-on-part t
+          erc-hide-timestamps nil)
+    (erc-update-modules))
+
+  ;; highlight nicks
+  (use-package erc-hl-nicks
+    :after erc
+    :ensure t
+    :config
+    (add-to-list 'erc-modules 'hl-nicks)
+    (erc-update-modules))
+
+  ;; Display images as links in a channel
+  (use-package erc-image
+    :after erc
+    :ensure t
+    :config
+    (add-to-list 'erc-modules 'image)
+    (erc-update-modules))
+#+END_SRC
+** pass
+I use [[https://www.passwordstore.org/][=pass=]] for my password management.
+    #+BEGIN_SRC emacs-lisp
+      (use-package ivy-pass
+        :ensure t)
+    #+END_SRC
+* Keybindings
+  [[https://github.com/noctuid/general.el][General]] is used for my keybindings.
+     
+** Leader definitions
+   Create a leader key, like the \ in vim.
+   In this case, =SPC= is used as a leader. Following the leader,
+   different buttons bring you to different options.
+- =m= major-mode operations
+- =o= org-mode global things like the agenda and capture
+- =h= help buttons
+- =b= buffer operations
+- =f= anything to do with files
+- more to come!
+  
+I'm unintentionally reimplimenting spacemacs at this point...
+
+See [[https://github.com/noctuid/general.el#which-key-integration][here]] for which-key integration information
+#+BEGIN_SRC emacs-lisp
+  (general-create-definer leader-def
+    :keymaps 'override
+    :prefix "SPC"
+    "m" '(:ignore t :which-key "major-mode prefix")
+    "o" '(:ignore t :which-key "org-mode prefix")
+    "h" '(:ignore t :which-key "help!")
+    "b" '(:ignore t :which-key "buffer prefix")
+    "w" '(:ignore t :which-key "window prefix")
+    "f" '(:ignore t :which-key "file prefix"))
+
+  (general-create-definer leader-major-def
+    :keymaps 'override
+    :prefix "SPC m")
+
+  (general-create-definer leader-org-def
+    :keymaps 'override
+    :prefix "SPC o")
+
+  (general-create-definer leader-help-def
+    :keymaps 'override
+    :prefix "SPC h")
+
+  (general-create-definer leader-buffer-def
+    :keymaps 'override
+    :prefix "SPC b")
+
+  (general-create-definer leader-file-def
+    :keymaps 'override
+    :prefix "SPC f")
+
+#+END_SRC
+
+** Global keybindings
+*** Window operations
+    #+BEGIN_SRC emacs-lisp
+      (general-define-key
+       :states 'normal
+       :keymaps 'override
+       :prefix "SPC w"
+       "h" 'evil-window-left
+       "j" 'evil-window-down
+       "k" 'evil-window-up
+       "l" 'evil-window-right
+       "H" 'evil-window-far-left
+       "J" 'evil-window-move-very-bottom
+       "K" 'evil-window-move-very-top
+       "L" 'evil-window-far-right
+       "<" 'evil-window-decrease-width
+       ">" 'evil-window-increase-width
+       "-" 'evil-window-decrease-height
+       "+" 'evil-window-increase-height
+       "n" 'evil-window-new
+       "c" 'evil-window-delete
+       "w" 'evil-window-next
+       "W" 'evil-window-prev
+       "r" 'evil-window-rotate-downwards
+       "s" 'evil-window-split
+       "v" 'evil-window-vsplit
+       "|" 'evil-window-set-width
+       "_" 'evil-window-set-height
+       "o" 'delete-other-windows)
+    #+END_SRC
+*** File operations
+**** Find and do other useful things
+    #+BEGIN_SRC emacs-lisp
+      (leader-file-def
+       :states 'normal
+       :keymaps 'override
+       "f" 'find-file
+       "w" 'save-buffer)
+    #+END_SRC
+**** Emacs-related
+***** config edit / reload
+    hit e to do that.
+    #+BEGIN_SRC emacs-lisp
+  (defun wiz-config-visit ()
+    (interactive)
+    (find-file (concat user-emacs-directory "config.org")))
+  (defun wiz-config-reload ()
+    (interactive)
+    (org-babel-load-file
+      (expand-file-name "config.org" user-emacs-directory)))
+  (leader-file-def
+   :states 'normal
+   :keymaps 'override
+   "e" '(:ignore t :which-key "emacs files")
+   "e e" 'wiz-config-visit
+   "e r" 'wiz-config-reload)
+    #+END_SRC
+    
+*** Terminal and simulated leader keys
+    #+BEGIN_SRC emacs-lisp
+(leader-def
+:states 'normal
+ "c" (general-simulate-key "C-c")
+ "x" (general-simulate-key "C-x")
+ "RET" 'eshell)
+    #+END_SRC
+    
+*** Help!
+    #+BEGIN_SRC emacs-lisp
+(leader-help-def
+ :states 'normal
+ "?" 'help-for-help
+ "k" 'counsel-descbinds
+ "f" 'counsel-describe-function
+ "v" 'counsel-describe-variable
+ "a" 'counsel-apropos
+ "h" 'help-for-help)
+    #+END_SRC
+    
+*** org-mode global bindings
+    Pull up org mode stuff
+    #+BEGIN_SRC emacs-lisp
+(leader-org-def
+ :states 'normal
+ "a" 'org-agenda
+ "l" 'org-store-link
+ "c" 'counsel-org-capture
+ "b" 'org-switchb)
+    #+END_SRC
+    
+*** Buffers
+    Enable =ibuffer=, add some convenient bindings, and do some fancy
+    things with [[http://irreal.org/blog/?p=5355][ivy's buffer switching]].
+    #+BEGIN_SRC emacs-lisp
+      (general-define-key
+       :keymaps 'override
+       "C-x b" 'ibuffer)
+    #+END_SRC
+    
+    Bind some stuff to do some buffer modifications
+    #+BEGIN_SRC emacs-lisp
+      (defun wiz-kill-all-buffers ()
+        (interactive)
+        (mapc 'kill-buffer (buffer-list)))
+
+      (defun wiz-kill-curr-buffer ()
+        (interactive)
+        (kill-buffer (current-buffer)))
+
+      (leader-buffer-def 
+       :states 'normal
+       "s" 'ivy-switch-buffer
+       "v" 'ivy-push-view
+       "V" 'ivy-pop-view
+       "b" 'ibuffer
+       "c" 'wiz-kill-curr-buffer
+       "C" 'wiz-kill-all-buffers)
+    #+END_SRC
+*** pass
+Just a simple bind to pull up my password manager
+#+BEGIN_SRC emacs-lisp
+  (leader-def
+    :states 'normal
+    :keymaps 'override
+    "p" 'ivy-pass)
+#+END_SRC
+*** Fix Swiper search buttons
+For some reason, searching with swiper causes these to be reversed.
+#+BEGIN_SRC emacs-lisp
+  (general-define-key
+   :keymaps 'override
+   :states 'normal
+   "n" 'evil-search-previous
+   "N" 'evil-search-next)
+#+END_SRC
+** Major mode bindings
+*** Org mode
+    #+BEGIN_SRC emacs-lisp
+(leader-major-def
+  :states 'normal
+  :keymaps 'org-mode-map
+  "e" 'org-export-dispatch
+  "a" 'org-attach
+  "^" 'evil-first-non-blank) ;; Something is overwriting this and I like it
+    #+END_SRC
+    
+*** Org capture 
+    #+BEGIN_SRC emacs-lisp
+(leader-major-def
+  :states 'normal
+  :keymaps 'org-capture-mode-map
+  "c" 'org-capture-finalize
+  "w" 'org-capture-refile
+  "k" 'org-capture-kill)
+    #+END_SRC
+    
+*** ERC
+Rebind the =C-c= ERC bindings to the major mode leader
+#+BEGIN_SRC emacs-lisp
+  (leader-major-def
+    :keymaps 'erc-mode
+    :states 'normal
+    "b" 'erc-iswitchb
+    "c" 'erc-toggle-interpret-controls
+    "d" 'erc-input-action
+    "e" 'erc-toggle-ctcp-autoresponse
+    "f" 'erc-toggle-flood-control
+    "TAB" 'erc-invite-only-mode
+    "j" 'erc-join-channel
+    "k" 'erc-go-to-log-matches-buffer
+    "l" 'erc-save-buffer-in-logs
+    "n" 'erc-channel-names
+    "o" 'erc-get-channel-names-from-keypress
+    "p" 'erc-part-from-channel
+    "q" 'erc-quit-from-server
+    "r" 'erc-remove-text-properties-region
+    "t" 'erc-set-topic
+    "u" 'erc-kill-input)
+#+END_SRC
+** Minor mode bindings
+*** Undo tree
+   Pop up the undo tree on U
+   #+BEGIN_SRC emacs-lisp
+(general-define-key
+ :states 'normal
+ :keymaps 'undo-tree-map
+ "U" 'undo-tree-visualize)
+   #+END_SRC
+*** Swiper
+    Better searching with =/=
+    #+BEGIN_SRC emacs-lisp
+  (general-define-key
+   :keymaps 'override
+   :states 'normal
+   "/" 'swiper)
+    #+END_SRC
+*** avy
+    make =f= do some fancy finding
+    #+BEGIN_SRC emacs-lisp
+  (general-define-key
+   :keymaps 'override
+   :states 'normal
+   "f" 'avy-goto-char-in-line
+   "F" 'avy-goto-char)
+    #+END_SRC
+*** Counsel
+    Do counsel stuff instead of emacs stuff
+    #+BEGIN_SRC emacs-lisp
+(general-define-key
+ :keymaps 'override
+ "M-x" 'counsel-M-x)
+    #+END_SRC
+   
+*** Company
+Make it so company closes nicely
+#+BEGIN_SRC emacs-lisp
+  (general-define-key
+   :keymaps 'company-active-map
+   "C-SPC" 'company-abort)
+#+END_SRC
