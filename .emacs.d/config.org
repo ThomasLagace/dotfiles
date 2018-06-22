@@ -1,4 +1,4 @@
-* General Emacs Coniguration
+* General Emacs Configuration
 ** Customize file
    Makes it so the customize data isn't schlunked in my init.el
    #+BEGIN_SRC emacs-lisp
@@ -279,7 +279,8 @@ Use [[https://github.com/dylanaraps/pywal][wal]] and [[https://www.gnu.org/softw
    (defun wiz-apply-theme ()
      (interactive)
      (progn
-        (load-file wiz-theme)))
+        (when (file-exists-p wiz-theme)
+        (load-file wiz-theme))))
 
    (defun theme-callback (event)
      (wiz-apply-theme))
@@ -295,15 +296,15 @@ Use [[https://github.com/dylanaraps/pywal][wal]] and [[https://www.gnu.org/softw
 ** Repo Location
    Let's start by configuring the repositories
    #+BEGIN_SRC emacs-lisp
-(require 'package)
+     (require 'package)
 
-(setq package-archives '(("gnu" . "https://elpa.gnu.org/packages/")
-                         ("marmalade" . "https://marmalade-repo.org/packages/")
-                         ;;("melpa-stable" . "https://stable.melpa.org/packages/")
-                         ("melpa" . "https://melpa.org/packages/")
-                         ("org" . "https://orgmode.org/elpa/")))
-(setq package-enable-at-startup nil)
-(package-initialize)
+     (setq package-archives '(("gnu" . "https://elpa.gnu.org/packages/")
+                              ("marmalade" . "https://marmalade-repo.org/packages/")
+                              ;; ("melpa-stable" . "https://stable.melpa.org/packages/")
+                              ("melpa" . "https://melpa.org/packages/")
+                              ("org" . "https://orgmode.org/elpa/")))
+     (setq package-enable-at-startup nil)
+     (package-initialize)
    #+END_SRC
    
 ** use-package
@@ -951,6 +952,20 @@ I use [[https://www.passwordstore.org/][=pass=]] for my password management.
       (use-package ivy-pass
         :ensure t)
     #+END_SRC
+** Git (magit)
+I hear that this is one of those emacs "killer apps"
+
+See keybindings [[https://github.com/emacs-evil/evil-magit][here.]]
+#+BEGIN_SRC emacs-lisp
+  (use-package magit
+    :pin melpa
+    :ensure t
+    :defer t)
+
+  (use-package evil-magit
+    :after (magit evil)
+    :ensure t)
+#+END_SRC
 * Keybindings
   [[https://github.com/noctuid/general.el][General]] is used for my keybindings.
      
@@ -1180,6 +1195,18 @@ Rebind the =C-c= ERC bindings to the major mode leader
     "t" 'erc-set-topic
     "u" 'erc-kill-input)
 #+END_SRC
+*** magit
+#+BEGIN_SRC emacs-lisp
+
+  (leader-major-def
+    :states 'normal
+    :keymaps 'magit-mode-map
+    "f" 'magit-fetch ;; Avy overwrites this by default,
+    "F" 'magit-pull) ;; so set it back to evil-magit's default
+                     
+
+
+#+END_SRC
 ** Minor mode bindings
 *** Undo tree
    Pop up the undo tree on U
@@ -1201,7 +1228,7 @@ Rebind the =C-c= ERC bindings to the major mode leader
     make =f= do some fancy finding
     #+BEGIN_SRC emacs-lisp
   (general-define-key
-   :keymaps 'override
+   :keymaps 'global
    :states 'normal
    "f" 'avy-goto-char-in-line
    "F" 'avy-goto-char)
