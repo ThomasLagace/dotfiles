@@ -961,11 +961,10 @@ See keybindings [[https://github.com/emacs-evil/evil-magit][here.]]
 #+BEGIN_SRC emacs-lisp
   (use-package magit
     :pin melpa
-    :ensure t
-    :defer t)
+    :ensure t)
 
   (use-package evil-magit
-    :after (magit evil)
+    :after (magit evil evil-collection)
     :ensure t)
 #+END_SRC
 * Keybindings
