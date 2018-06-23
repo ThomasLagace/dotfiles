@@ -678,9 +678,11 @@ version. You can =lein search cider-nrepl= in a terminal for this.
     (add-to-list 'clojure-mode-hook 'yas-minor-mode))
 #+END_SRC
 *** Markdown
-    (use-package markdown-mode
-    :defer t
-    :ensure t)
+    #+BEGIN_SRC emacs-lisp
+      (use-package markdown-mode
+        :defer t
+        :ensure t)
+    #+END_SRC
 *** Python
 **** jedi for autocompletion sources n stuff
     #+BEGIN_SRC emacs-lisp
