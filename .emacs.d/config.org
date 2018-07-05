@@ -321,7 +321,8 @@ Use [[https://github.com/dylanaraps/pywal][wal]] and [[https://www.gnu.org/softw
    #+END_SRC
    
 * Package Configuration
-** Automagic updates
+** Convenience
+*** Automagic updates
    Keep packages up to date
    #+BEGIN_SRC emacs-lisp
 (use-package auto-package-update
@@ -335,55 +336,36 @@ Use [[https://github.com/dylanaraps/pywal][wal]] and [[https://www.gnu.org/softw
    
    Get a theme that looks good with wal
    
-** avy
+*** avy
    use =f= to hint letters n stuff.
    #+BEGIN_SRC emacs-lisp
   (use-package avy
     :ensure t)
    #+END_SRC
-** Themes
-   My current theme configuration above does this better
-   #+BEGIN_SRC COMMENT
-     (when window-system
-       (use-package xresources-theme
-        :ensure t
-        :config
-        (load-theme 'xresources t)))
-
-   #+END_SRC
-   
-** hide minor modes on modeline
-   Diminish hides minor modes on the modeline.
-   #+BEGIN_SRC emacs-lisp
-     (use-package diminish
-       :ensure t
-       :init
-       (diminish 'beacon-mode)
-       (diminish 'rainbow-mode)
-       (diminish 'evil-org-mode)
-       (diminish 'beacon-mode)
-       (diminish 'evil-escape-mode)
-       (diminish 'evil-commentary-mode)
-       (diminish 'which-key-mode)
-       (diminish 'ivy-mode)
-       (diminish 'undo-tree-mode)
-       (diminish 'which-key-mode))
-   #+END_SRC
-** symon
-Displays a system monitor in the echo area when nothing is really
-happening.
-
-I have it disabled because it tends to get in the way when things pop
-up that need a bit of time to read.
-
-   #+BEGIN_SRC commented
-     (use-package symon
-       :ensure t
-       :defer t
-       :init
-       (symon-mode))
-   #+END_SRC
-** rainbow
+*** shift-number
+Shifts the next number on the given line
+#+BEGIN_SRC emacs-lisp
+  (use-package shift-number
+    :ensure t)
+#+END_SRC
+*** hide minor modes on modeline
+Diminish hides minor modes on the modeline.
+#+BEGIN_SRC emacs-lisp
+  (use-package diminish
+    :ensure t
+    :init
+    (diminish 'beacon-mode)
+    (diminish 'rainbow-mode)
+    (diminish 'evil-org-mode)
+    (diminish 'beacon-mode)
+    (diminish 'evil-escape-mode)
+    (diminish 'evil-commentary-mode)
+    (diminish 'which-key-mode)
+    (diminish 'ivy-mode)
+    (diminish 'undo-tree-mode)
+    (diminish 'which-key-mode))
+#+END_SRC
+*** rainbow
    Lights up color tokens / delimiters
     
    It might be better to later configure this to only enable on
@@ -398,14 +380,22 @@ up that need a bit of time to read.
     :init
     (rainbow-delimiters-mode 1))
    #+END_SRC
-** Show cursor location
-   When a window is changed / opened, the cursor's location is visibly
-   pinged.
+*** Show cursor location
+When a window is changed / opened, the cursor's location is visibly
+pinged.
+#+BEGIN_SRC emacs-lisp
+  (use-package beacon
+    :ensure t
+    :init
+    (beacon-mode 1))
+#+END_SRC
+*** Show key binds
+   Pops up a screen that helps you navigate and complete commands
    #+BEGIN_SRC emacs-lisp
-     (use-package beacon
-       :ensure t
-       :init
-       (beacon-mode 1))
+(use-package which-key
+  :ensure t
+  :init
+  (which-key-mode))
    #+END_SRC
 ** org-mode
 *** Master org package
@@ -449,7 +439,7 @@ For [[https://github.com/abo-abo/org-download][drag n drop]] images n stuff
 *** Vim bindings
     Let's get some vim up in here.
     
-**** Evil
+**** evil
     Evil is pretty much the entirety of Vim in Emacs.
     
     [[https://github.com/emacs-evil/evil-collection][evil-collection]] provides evil in many different modes.
@@ -544,27 +534,14 @@ Essentially:
    #+END_SRC
 *** TODO: Make tag files do stuff
    
-** Line numbering
-   Make it happen relatively to the current line.
-   This can assist greatly with evil navigation.
-   
-   This is now handled by emacs builtin =display-line-numbers-mode=
-   #+BEGIN_SRC emacs-lisp
-     ;; (use-package linum-relative
-     ;;   :ensure t
-     ;;   :config
-     ;;   (unless (version<= emacs-version "26.1")
-     ;;     (setq linum-relative-backend 'display-line-numbers-mode))
-     ;;  (add-hook 'find-file-hook 'linum-relative-mode))
-   #+END_SRC
 ** Project Management
-    TODO: Set this up to actually work well
-   #+BEGIN_SRC emacs-lisp
+TODO: Set this up to actually work well
+#+BEGIN_SRC emacs-lisp
 (use-package projectile
-  :ensure t
-  :config
-  (projectile-global-mode))
-   #+END_SRC
+ :ensure t
+ :config
+ (projectile-global-mode))
+#+END_SRC
 ** Autocompletion
 *** Fuzzy matching
     Ivy, swiper, and counsel all provide fuzzy-matching on different emacs
@@ -845,14 +822,6 @@ Show completions for shell mode buffers
     :ensure t
     :defer t)
 #+END_SRC
-** Show key binds
-   Pops up a screen that helps you navigate and complete commands
-   #+BEGIN_SRC emacs-lisp
-(use-package which-key
-  :ensure t
-  :init
-  (which-key-mode))
-   #+END_SRC
 ** IRC
 Internet relay chat. It's where hackers go to communicate. Think of it
 like two boats in a shipping channel.
@@ -1202,8 +1171,8 @@ Rebind the =C-c= ERC bindings to the major mode leader
   (leader-major-def
     :states 'normal
     :keymaps 'magit-mode-map
-    "f" 'magit-fetch ;; Avy overwrites this by default,
-    "F" 'magit-pull) ;; so set it back to evil-magit's default
+    "f" 'magit-fetch ; Avy overwrites this by default,
+    "F" 'magit-pull) ; so set it back to evil-magit's default
                      
 
 
@@ -1248,4 +1217,16 @@ Make it so company closes nicely
   (general-define-key
    :keymaps 'company-active-map
    "C-SPC" 'company-abort)
+#+END_SRC
+*** shift-numbers
+#+BEGIN_SRC emacs-lisp
+  (general-define-key
+   :keymaps 'override
+   "M-+" 'shift-number-up
+   "M-_" 'shift-number-down)
+
+  (leader-def
+    :states 'normal
+    "=" 'shift-number-up
+    "-" 'shift-number-down)
 #+END_SRC
