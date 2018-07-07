@@ -292,6 +292,10 @@ Use [[https://github.com/dylanaraps/pywal][wal]] and [[https://www.gnu.org/softw
   ;; Set the theme on startup
   (wiz-apply-theme)
 #+END_SRC
+** tramp
+#+BEGIN_SRC emacs-lisp
+  (setq tramp-default-method "ssh")
+#+END_SRC
 * Package Repo Config
 ** Repo Location
    Let's start by configuring the repositories
@@ -547,20 +551,25 @@ TODO: Set this up to actually work well
     Ivy, swiper, and counsel all provide fuzzy-matching on different emacs
     operations.
     #+BEGIN_SRC emacs-lisp
-(use-package ivy
-  :ensure t
-  :config
-  (setq ivy-use-virtual-buffers t
-            ivy-count-format "%d/%d "))
+      (use-package ivy
+        :ensure t
+        :config
+        (setq ivy-use-virtual-buffers t
+                  ivy-count-format "%d/%d "))
 
-(use-package swiper
-  :ensure t)
+      (use-package swiper
+        :ensure t)
 
-(use-package counsel
-  :ensure t)
+      (use-package counsel
+        :ensure t)
 
-(use-package counsel-projectile
-  :ensure t)
+      (use-package counsel-tramp
+        :after counsel
+        :ensure t)
+
+      (use-package counsel-projectile
+        :after counsel
+        :ensure t)
     #+END_SRC
     
 *** Code completion
