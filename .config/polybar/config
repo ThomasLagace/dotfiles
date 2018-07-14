@@ -24,7 +24,7 @@ offset-y = 1%
 radius = 0.0
 fixed-center = false
 
-background = ${env:POLYBAR_BACK:colors.background}
+background = ${colors.background}
 foreground = ${colors.foreground}
 
 line-size = 3
@@ -39,8 +39,9 @@ padding-right = 2
 module-margin-left = 1
 module-margin-right = 2
 
-font-0 = TamzenForPowerline:antialias=false:pixelsize=13;0
-font-1 = "Wuncon Siji:pixelsize=12;1"
+font-0 = NSimSun:antialias=false:pixelsize=11;0
+;font-1 = TamzenForPowerline:antialias=false:pixelsize=13;0
+font-2 = "Wuncon Siji:pixelsize=12;1"
 
 modules-left = i3
 modules-center = mpd
@@ -75,7 +76,7 @@ height = 24
 radius = 0.0
 fixed-center = false
 
-background = ${env:POLYBAR_BACK:colors.background}
+background = ${colors.background}
 foreground = ${colors.foreground}
 
 line-size = 3
@@ -117,6 +118,55 @@ scroll-up = i3wm-wsnext
 cursor-click = pointer
 cursor-scroll = default
 
+[bar/laptop]
+width = 100%
+height = 24
+offset-x = 1%
+offset-y = 1%
+radius = 0.0
+fixed-center = false
+
+background = ${colors.background}
+foreground = ${colors.foreground}
+
+line-size = 3
+line-color = #f00
+
+;border-size = 12
+border-color = #00000000
+
+padding-left = 2
+padding-right = 2
+
+module-margin-left = 1
+module-margin-right = 2
+
+font-0 = "NSimSun:antialias=false:pixelsize=10;0"
+font-1 = "Wuncon Siji:pixelsize=12;1"
+
+modules-left = i3
+modules-center = mpd
+modules-right = filesystem memory cpu wlan eth xbacklight battery date
+; Add these if laptop: xbacklight battery powermenu
+
+; tray-position = center
+tray-padding = 0
+tray-transparent = true
+tray-background = ${root.background}
+
+;wm-restack = bspwm
+;wm-restack = i3
+
+;override-redirect = true
+
+;scroll-up = bspwm-desknext
+;scroll-down = bspwm-deskprev
+
+scroll-up = i3wm-wsnext
+scroll-down = i3wm-wsprev
+
+cursor-click = pointer
+cursor-scroll = default
 
 [module/xwindow]
 type = internal/xwindow
@@ -234,7 +284,7 @@ bar-indicator-foreground = #ff
 bar-indicator-font = 2
 bar-fill = -
 bar-fill-font = 2
-bar-fill-foreground = #9f78e1
+bar-fill-foreground = ${xrdb:color8}
 bar-empty = -
 bar-empty-font = 2
 bar-empty-foreground = ${colors.foreground-alt}
@@ -262,11 +312,11 @@ label = %gb_used%
 
 [module/wlan]
 type = internal/network
-interface = wlp3s0
+interface = wlp1s0
 interval = 3.0
 
 format-connected = <ramp-signal> <label-connected>
-format-connected-underline = #9f78e1
+format-connected-underline = ${xrdb:color4}
 label-connected = %essid%
 
 format-disconnected =
@@ -275,11 +325,11 @@ format-disconnected =
 ;label-disconnected = %ifname% disconnected
 ;label-disconnected-foreground = ${colors.foreground-alt}
 
-ramp-signal-0 = .
-ramp-signal-1 = ..
-ramp-signal-2 = ...
-ramp-signal-3 = ....
-ramp-signal-4 = .....
+ramp-signal-0 = 1
+ramp-signal-1 = 2
+ramp-signal-2 = 3
+ramp-signal-3 = 4
+ramp-signal-4 = 5
 ramp-signal-foreground = ${colors.foreground-alt}
 
 [module/eth]
@@ -379,20 +429,20 @@ format-charging = <animation-charging> <label-charging>
 format-charging-underline = #ffb52a
 
 format-discharging = <ramp-capacity> <label-discharging>
-format-discharging-underline = ${self.format-charging-underline}
+format-discharging-underline = ${xrdb:color5:222}
 
 format-full-prefix = "BAT "
-format-full-prefix-foreground = ${colors.foreground-alt}
+format-full-prefix-foreground = ${xrdb:color6:222}
 format-full-underline = ${self.format-charging-underline}
 
-ramp-capacity-0 = .
-ramp-capacity-1 = ..
-ramp-capacity-2 = ...
+ramp-capacity-0 = _
+ramp-capacity-1 = -
+ramp-capacity-2 = =
 ramp-capacity-foreground = ${colors.foreground-alt}
 
-animation-charging-0 = +
-animation-charging-1 = ++
-animation-charging-2 = +++
+animation-charging-0 = _
+animation-charging-1 = -
+animation-charging-2 = =
 animation-charging-foreground = ${colors.foreground-alt}
 animation-charging-framerate = 750
 
