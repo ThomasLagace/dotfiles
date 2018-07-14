@@ -22,48 +22,47 @@
    Disable the useless cruft at the top of the screen
    
    #+BEGIN_SRC emacs-lisp
-(menu-bar-mode 0)
-(tool-bar-mode 0)
-(scroll-bar-mode -1)
+   (menu-bar-mode 0)
+   (tool-bar-mode 0)
+   (scroll-bar-mode -1)
    #+END_SRC
    
 ** Show parenthesis
    Shows matching parenthesis  
    #+BEGIN_SRC emacs-lisp
-(require 'paren)
-(set-face-background 'show-paren-match (face-background 'default))
-(set-face-foreground 'show-paren-match "#def")
-(set-face-attribute 'show-paren-match nil :weight 'extra-bold)
-(setq show-paren-delay 0)
-(show-paren-mode)
+    (require 'paren)
+    (set-face-background 'show-paren-match (face-background 'default))
+    (set-face-foreground 'show-paren-match "#def")
+    (set-face-attribute 'show-paren-match nil :weight 'extra-bold)
+    (setq show-paren-delay 0)
+    (show-paren-mode)
    #+END_SRC
    
 ** electric pairs
    When you open a code block, close that block.
    #+BEGIN_SRC emacs-lisp
      (setq electric-pair-pairs '(
-                                      (?\( . ?\))
-                                      (?\[ . ?\])
-                                      (?\{ . ?\})
-                                      (?\" . ?\")
-                                      ;; (?\' . ?\')
-                                      ))
+                                 (?\( . ?\))
+                                 (?\[ . ?\])
+                                 (?\{ . ?\})
+                                 (?\" . ?\")
+                                 ;; (?\' . ?\')
+                                 ))
      (setq electric-pair-preserve-balance t)
      (electric-pair-mode t)
    #+END_SRC
 ** Show columns
    #+BEGIN_SRC emacs-lisp
-  (setq column-number-mode t)
+   (setq column-number-mode t)
    #+END_SRC
    
 ** Fonts
    Set the font to something cool
    #+BEGIN_SRC emacs-lisp
-(set-default-font "Terminus-11")
-
-(add-to-list 'default-frame-alist
-             '(font . "Terminus-11")
-             '(font . "Noto Sans CJK JP-11"))
+     (set-default-font "NSimSun-12")
+     (add-to-list 'default-frame-alist
+                  '(font . "NSimSun-12")
+                  '(font . "Noto Sans Mono CJK JP-12"))
    #+END_SRC
    
 ** Transparency
@@ -73,8 +72,8 @@
    active, the second when it's inactive.
    #+BEGIN_SRC emacs-lisp
                                         ;; active . inactive
-(set-frame-parameter (selected-frame) 'alpha '(85 . 85))
-(add-to-list 'default-frame-alist '(alpha . (85 . 85)))
+    (set-frame-parameter (selected-frame) 'alpha '(100 . 100))
+    (add-to-list 'default-frame-alist '(alpha . (100 . 100)))
    #+END_SRC
 ** Backup files
    Edit backup files properties
@@ -96,7 +95,7 @@
    
 ** Scrolling
    #+BEGIN_SRC emacs-lisp
-(setq scroll-conservatively 100) ;; don't scroll a metric boatload when bottom is hit
+   (setq scroll-conservatively 100) ;; don't scroll a metric boatload when bottom is hit
    #+END_SRC
    
    #+BEGIN_SRC emacs-lisp
@@ -744,7 +743,7 @@ Should give everything you need for a web-dev major mode, except for
 company integration.
 
 This might also provide a decent php-mode, but that might require some
-testing, especially without company.
+testing.
 #+BEGIN_SRC emacs-lisp
   (use-package web-mode
     :pin melpa
@@ -760,6 +759,7 @@ testing, especially without company.
     (add-to-list 'auto-mode-alist '("\\.mustache\\'" . web-mode))
     (add-to-list 'auto-mode-alist '("\\.djhtml\\'" . web-mode))
     :config
+    (setq web-mode-markup-indent-offset 2)
     (add-hook 'web-mode-hook 'company-mode))
     
 #+END_SRC
@@ -947,7 +947,6 @@ See keybindings [[https://github.com/emacs-evil/evil-magit][here.]]
 #+END_SRC
 * Keybindings
   [[https://github.com/noctuid/general.el][General]] is used for my keybindings.
-     
 ** Leader definitions
    Create a leader key, like the \ in vim.
    In this case, =SPC= is used as a leader. Following the leader,
