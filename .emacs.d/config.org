@@ -1139,6 +1139,13 @@ For some reason, searching with swiper causes these to be reversed.
    "n" 'evil-search-previous
    "N" 'evil-search-next)
 #+END_SRC
+*** magit
+#+BEGIN_SRC emacs-lisp
+  (leader-def
+   :states 'normal
+   :keymaps 'override
+   "g" 'magit)
+#+END_SRC
 ** Major mode bindings
 *** Org mode
     #+BEGIN_SRC emacs-lisp
