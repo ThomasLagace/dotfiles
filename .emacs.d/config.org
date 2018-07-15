@@ -71,9 +71,15 @@
    The first number in the alpha section applies when the window is
    active, the second when it's inactive.
    #+BEGIN_SRC emacs-lisp
-                                        ;; active . inactive
-    (set-frame-parameter (selected-frame) 'alpha '(100 . 100))
-    (add-to-list 'default-frame-alist '(alpha . (100 . 100)))
+                                ;; Set transparency of emacs
+     (defun wiz-transparency (value)
+       "Sets the transparency of the frame window. 0=transparent/100=opaque"
+       (interactive "nTransparency Value 0 - 100 opaque:")
+       (set-frame-parameter (selected-frame) 'alpha value))
+     (wiz-transparency 90)
+
+     ;; (set-frame-parameter (selected-frame) 'alpha '(100 . 100))
+     ;; (add-to-list 'default-frame-alist '(alpha . (100 . 100)))
    #+END_SRC
 ** Backup files
    Edit backup files properties
@@ -914,16 +920,20 @@ like two boats in a shipping channel.
   (use-package erc-hl-nicks
     :after erc
     :ensure t
-    :config
+    :defer t
+    :init
     (add-to-list 'erc-modules 'hl-nicks)
+    :config
     (erc-update-modules))
 
   ;; Display images as links in a channel
   (use-package erc-image
     :after erc
     :ensure t
-    :config
+    :defer t
+    :init
     (add-to-list 'erc-modules 'image)
+    :config
     (erc-update-modules))
 #+END_SRC
 ** pass
