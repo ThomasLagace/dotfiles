@@ -76,6 +76,7 @@
        "Sets the transparency of the frame window. 0=transparent/100=opaque"
        (interactive "nTransparency Value 0 - 100 opaque:")
        (set-frame-parameter (selected-frame) 'alpha value))
+       
      (wiz-transparency 90)
 
      ;; (set-frame-parameter (selected-frame) 'alpha '(100 . 100))
@@ -627,10 +628,31 @@ installed.
       (global-pretty-mode t)))
    #+END_SRC
 ** Programming language specific stuff
-*** emacs-lisp
-Enable yasnippet
+*** C / C++
+**** Completion
+Irony handles enhanced C / C++ operations powered by clang
 #+BEGIN_SRC emacs-lisp
-  (add-hook 'emacs-lisp-mode-hook 'yas-minor-mode)
+      (use-package company-irony
+        :after (company, irony)
+        :ensure t
+        :config
+        (add-to-list 'company-backends 'company-irony))
+      (use-package irony
+        :ensure t
+        :defer t
+        :init
+        (add-hook 'c++-mode-hook 'irony-mode)
+        (add-hook 'c-mode-hook 'irony-mode)
+        (add-hook 'irony-mode-hook 'irony-cdb-autosetup-compile-options))
+      (with-eval-after-load 'company
+        (add-hook 'c++-mode-hook 'company-mode)
+        (add-hook 'c-mode-hook 'company-mode))
+#+END_SRC
+**** Snippets
+Enable yasnippet on c / c++ modes
+#+BEGIN_SRC emacs-lisp
+  (add-hook 'c-mode-hook 'yas-minor-mode)
+  (add-hook 'c++-mode-hook 'yas-minor-mode)
 #+END_SRC
 *** Clojure
 Now that I'm going to be trying out this live-coding thing, I'm going
@@ -668,27 +690,22 @@ version. You can =lein search cider-nrepl= in a terminal for this.
     :config
     (add-to-list 'clojure-mode-hook 'yas-minor-mode))
 #+END_SRC
-*** Markdown
-    #+BEGIN_SRC emacs-lisp
-      (use-package markdown-mode
-        :defer t
-        :ensure t)
-    #+END_SRC
-*** Python
-**** jedi for autocompletion sources n stuff
-    #+BEGIN_SRC emacs-lisp
-      (use-package company-jedi
-        :ensure t
-        :defer t
-        :init
-        (defun wiz-python-company-mode-hook ()
-            (add-to-list 'company-backends 'company-jedi))
-        (add-hook 'python-mode-hook 'wiz-python-company-mode-hook))
-    #+END_SRC
-**** Snippets
+*** Elixir
+[[https://alchemist.readthedocs.io/en/latest/][Alchemist]] provides various elixir extensions.
+
+[[https://github.com/emacs-evil/evil-collection/blob/master/evil-collection-alchemist.el][Evil Collection]] bindings are avaliable
+#+BEGIN_SRC emacs-lisp
+  (use-package alchemist
+    :defer t
+    :ensure t
+    :init
+    (add-to-list 'elixir-mode-hook 'alchemist-mode)
+    (add-to-list 'elixir-mode-hook 'company-mode))
+#+END_SRC
+*** emacs-lisp
 Enable yasnippet
 #+BEGIN_SRC emacs-lisp
-  (add-to-list 'python-mode-hook 'yas-minor-mode)
+  (add-hook 'emacs-lisp-mode-hook 'yas-minor-mode)
 #+END_SRC
 *** Javascript
 **** Better editing mode
@@ -717,31 +734,27 @@ Enable yasnippet
 #+BEGIN_SRC emacs-lisp
   (add-to-list 'js2-mode-hook 'yas-minor-mode)
 #+END_SRC
-*** C / C++
-**** Completion
-Irony handles enhanced C / C++ operations powered by clang
-#+BEGIN_SRC emacs-lisp
-      (use-package company-irony
-        :after (company, irony)
-        :ensure t
-        :config
-        (add-to-list 'company-backends 'company-irony))
-      (use-package irony
+*** Markdown
+    #+BEGIN_SRC emacs-lisp
+      (use-package markdown-mode
+        :defer t
+        :ensure t)
+    #+END_SRC
+*** Python
+**** jedi for autocompletion sources n stuff
+    #+BEGIN_SRC emacs-lisp
+      (use-package company-jedi
         :ensure t
         :defer t
         :init
-        (add-hook 'c++-mode-hook 'irony-mode)
-        (add-hook 'c-mode-hook 'irony-mode)
-        (add-hook 'irony-mode-hook 'irony-cdb-autosetup-compile-options))
-      (with-eval-after-load 'company
-        (add-hook 'c++-mode-hook 'company-mode)
-        (add-hook 'c-mode-hook 'company-mode))
-#+END_SRC
+        (defun wiz-python-company-mode-hook ()
+            (add-to-list 'company-backends 'company-jedi))
+        (add-hook 'python-mode-hook 'wiz-python-company-mode-hook))
+    #+END_SRC
 **** Snippets
-Enable yasnippet on c / c++ modes
+Enable yasnippet
 #+BEGIN_SRC emacs-lisp
-  (add-hook 'c-mode-hook 'yas-minor-mode)
-  (add-hook 'c++-mode-hook 'yas-minor-mode)
+  (add-to-list 'python-mode-hook 'yas-minor-mode)
 #+END_SRC
 *** Web Development
 **** Web mode
@@ -762,6 +775,7 @@ testing.
     (add-to-list 'auto-mode-alist '("\\.[agj]sp\\'" . web-mode))
     (add-to-list 'auto-mode-alist '("\\.as[cp]x\\'" . web-mode))
     (add-to-list 'auto-mode-alist '("\\.erb\\'" . web-mode))
+    (add-to-list 'auto-mode-alist '("\\.eex\\'" . web-mode))
     (add-to-list 'auto-mode-alist '("\\.mustache\\'" . web-mode))
     (add-to-list 'auto-mode-alist '("\\.djhtml\\'" . web-mode))
     :config
@@ -1040,7 +1054,7 @@ See [[https://github.com/noctuid/general.el#which-key-integration][here]] for wh
       (leader-file-def
        :states 'normal
        :keymaps 'override
-       "f" 'find-file
+       "f" 'counsel-find-file
        "w" 'save-buffer)
     #+END_SRC
 **** Emacs-related
