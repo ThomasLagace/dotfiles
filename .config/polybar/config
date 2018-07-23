@@ -149,9 +149,9 @@ modules-center = mpd
 modules-right = filesystem memory cpu wlan eth xbacklight battery date
 ; Add these if laptop: xbacklight battery powermenu
 
-; tray-position = center
+tray-position = center
 tray-padding = 0
-tray-transparent = true
+tray-transparent = false
 tray-background = ${root.background}
 
 ;wm-restack = bspwm
