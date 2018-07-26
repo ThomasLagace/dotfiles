@@ -6,8 +6,8 @@
 # Editors
 #
 
-export EDITOR='nvim'
-export VISUAL='nvim'
+export EDITOR='emacsclient'
+export VISUAL='emacsclient'
 export PAGER='less'
 
 #
