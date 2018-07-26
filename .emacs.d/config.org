@@ -344,8 +344,6 @@ Use [[https://github.com/dylanaraps/pywal][wal]] and [[https://www.gnu.org/softw
   (auto-package-update-maybe))
    #+END_SRC
    
-   Get a theme that looks good with wal
-   
 *** avy
    use =f= to hint letters n stuff.
    #+BEGIN_SRC emacs-lisp
@@ -627,6 +625,12 @@ installed.
       :config
       (global-pretty-mode t)))
    #+END_SRC
+** Error checking
+#+BEGIN_SRC emacs-lisp
+  (use-package flycheck
+    :ensure t
+    :defer t)
+#+END_SRC
 ** Programming language specific stuff
 *** C / C++
 **** Completion
@@ -695,9 +699,14 @@ version. You can =lein search cider-nrepl= in a terminal for this.
 
 [[https://github.com/emacs-evil/evil-collection/blob/master/evil-collection-alchemist.el][Evil Collection]] bindings are avaliable
 #+BEGIN_SRC emacs-lisp
+  (use-package elixir-mode
+    :defer t
+    :ensure t)
+
   (use-package alchemist
     :defer t
     :ensure t
+    :after elixir-mode
     :init
     (add-to-list 'elixir-mode-hook 'alchemist-mode)
     (add-to-list 'elixir-mode-hook 'company-mode))
