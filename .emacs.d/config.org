@@ -517,6 +517,15 @@ Essentially:
     :init
     (add-hook 'prog-mode-hook 'evil-commentary-mode))
 #+END_SRC
+**** ex extras
+[[https://github.com/edkolev/evil-expat][evil-expat]]
+#+BEGIN_SRC emacs-lisp
+  (use-package evil-expat
+    :ensure t
+    ;; optional, defer loading until 1 second of inactivity,
+    ;; hence not affecting emacs startup time
+    :defer 1)
+#+END_SRC
 ** Startup splash screen
    Show a custom buffer on startup
    #+BEGIN_SRC emacs-lisp
@@ -562,6 +571,7 @@ TODO: Set this up to actually work well
                   ivy-count-format "%d/%d "))
 
       (use-package swiper
+        :after ivy
         :ensure t)
 
       (use-package counsel
@@ -574,10 +584,19 @@ TODO: Set this up to actually work well
       (use-package counsel-projectile
         :after counsel
         :ensure t)
+
+      (use-package ivy-rich
+        :after ivy
+        :ensure t
+        :config
+        (setq ivy-rich-path-style 'abbrev
+              ivy-virtual-abbreviate 'full
+              ivy-rich-switch-buffer-align-virtual-buffer t)
+        (ivy-rich-mode 1))
     #+END_SRC
     
 *** Code completion
-    [[https://github.com/auto-complete/auto-complete/blob/master/doc/manual.md][Auto completes]] stuff in the buffer
+   [[https://company-mode.github.io/][company]] comlpetes anything in the buffer
     
     #+BEGIN_SRC commented
 (use-package auto-complete
