@@ -344,12 +344,6 @@ Use [[https://github.com/dylanaraps/pywal][wal]] and [[https://www.gnu.org/softw
   (auto-package-update-maybe))
    #+END_SRC
    
-*** avy
-   use =f= to hint letters n stuff.
-   #+BEGIN_SRC emacs-lisp
-  (use-package avy
-    :ensure t)
-   #+END_SRC
 *** shift-number
 Shifts the next number on the given line
 #+BEGIN_SRC emacs-lisp
@@ -404,6 +398,19 @@ pinged.
   :ensure t
   :init
   (which-key-mode))
+   #+END_SRC
+** Text searching
+[[https://github.com/Wilfred/deadgrep][deadgrep]] provides a frontend to ripgrep
+#+BEGIN_SRC emacs-lisp
+  (use-package deadgrep
+    :ensure t
+    :defer 1)
+#+END_SRC
+*** avy
+   use =f= to hint letters n stuff.
+   #+BEGIN_SRC emacs-lisp
+  (use-package avy
+    :ensure t)
    #+END_SRC
 ** org-mode
 *** Master org package
